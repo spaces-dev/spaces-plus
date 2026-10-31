@@ -15,6 +15,7 @@ const repeatSelector = `${playerRoot} a.js-music_repeat`
 const downloadCellId = 'SP_MUSIC_DOWN'
 const storedTrack = 'music:track'
 const storedPlaylist = 'music:playlist'
+const storedMaxAge = 30 * 60 * 1000
 const builtinSound = '/i/sounds/'
 const maxNameLength = 120
 const fallbackName = 'track'
@@ -73,8 +74,10 @@ function fromStorage() {
     const trackRaw = readPage(win => win.sessionStorage.getItem(storedTrack))
     const playlistRaw = readPage(win => win.sessionStorage.getItem(storedPlaylist))
     if (!trackRaw || !playlistRaw) return
-    const track = JSON.parse(trackRaw) as { id?: string | number }
-    const saved = JSON.parse(playlistRaw) as { playlist?: { playlist?: SavedFile[] } }
+    const track = JSON.parse(trackRaw) as { id?: string | number, time?: number }
+    const saved = JSON.parse(playlistRaw) as { time?: number, playlist?: { playlist?: SavedFile[] } }
+    const savedMoments = [track.time, saved.time].filter((value): value is number => typeof value === 'number' && Number.isFinite(value))
+    if (!savedMoments.length || Date.now() - Math.min(...savedMoments) > storedMaxAge) return
     const trackId = Number.parseInt(String(track.id), 10)
     const files = saved.playlist?.playlist ?? []
     const file = files.find(item => item.index === trackId) ?? files[trackId]

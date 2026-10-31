@@ -3,14 +3,23 @@ import { el } from '@zero-dependency/dom'
 import { pluralize } from '@zero-dependency/utils'
 import { setChecked, siteCheckbox } from '@/core/checkbox'
 import { defineToggle } from '@/core/feature'
-import { http } from '@/core/http'
 import { log } from '@/core/log'
 import { modalConfirm } from '@/core/modals'
-import { anchoredHref } from '@/core/site'
+import { anchoredHref, siteApi, siteApiError, siteTabId } from '@/core/site'
 import { withStyle } from '@/core/with-style'
 import commentsCss from '@/styles/features/comments.scss?inline'
 import { toggleId } from '@/types/toggles'
-import { askingToSelectAll, eventElement, listButtonClass, okIcon, paintChooseAll, removeIcon, runDeleteQueue, warnNothingSelected, withIcon } from './batch-select'
+import {
+  askingToSelectAll,
+  eventElement,
+  listButtonClass,
+  okIcon,
+  paintChooseAll,
+  removeIcon,
+  runDeleteQueue,
+  warnNothingSelected,
+  withIcon,
+} from './batch-select'
 
 const commentWord = (count: number) => pluralize(count)`комментари${['й', 'я', 'ев']}`
 const commentsStyleId = 'SP_STYLE_COMMENTS'
@@ -31,6 +40,33 @@ function commentRoot(node: Node) {
 const commentId = (root: Element) => root.getAttribute('data-id') ?? ''
 
 const deleteLinkOf = (root: Element) => root.querySelector<HTMLAnchorElement>('a[data-action="comment_delete"]')
+
+function queryOf(href: string) {
+  const payload: Record<string, string> = {}
+  const url = new URL(href, location.href)
+  url.searchParams.forEach((value, key) => {
+    payload[key] = value
+  })
+  return payload
+}
+
+function commentPayload(root: HTMLElement, href: string) {
+  const payload: Record<string, unknown> = {
+    ...queryOf(href),
+    Comment_widget: 1,
+    CK: null,
+    hash: siteTabId(),
+    Ch: true,
+    Pag: false,
+  }
+  const list = root.closest<HTMLElement>('.js-comments_list')
+  if (!list) return payload
+  if (list.dataset.id) payload.Id = list.dataset.id
+  if (list.dataset.type) payload.type = list.dataset.type
+  const rootId = list.dataset.rootId || list.dataset.root_id
+  if (rootId) payload.Root_id = rootId
+  return payload
+}
 
 export const deleteComments: Feature = defineToggle({
   id: toggleId.comments,
@@ -82,23 +118,32 @@ export const deleteComments: Feature = defineToggle({
         innerHTML: withIcon(removeIcon, 'Удалить выбранные'),
       })
       remove.onclick = () => {
-        const urls: string[] = []
+        const pending: Array<{ root: HTMLElement, href: string }> = []
         for (const input of document.querySelectorAll<HTMLInputElement>(boxSelector)) {
           if (!input.checked) continue
           const root = commentRoot(input)
           const link = root ? deleteLinkOf(root) : null
-          if (link?.href) urls.push(link.href)
+          if (root && link?.href) pending.push({ root, href: link.href })
         }
 
-        if (!urls.length) {
+        if (!pending.length) {
           warnNothingSelected('комментарии, которые нужно удалить')
           return false
         }
 
-        modalConfirm(`Вы действительно хотите удалить ${urls.length} ${commentWord(urls.length)}?`, true, async () => {
-          await runDeleteQueue(urls, commentWord, async (url) => {
-            const response = await http(url, { proxy: true })
-            log.info('Удалил комментарий', response)
+        modalConfirm(`Вы действительно хотите удалить ${pending.length} ${commentWord(pending.length)}?`, true, async () => {
+          await runDeleteQueue(pending, commentWord, async ({ root, href }) => {
+            try {
+              const result = await siteApi('comments.delete', commentPayload(root, href))
+              if (Number(result.code) !== 0) {
+                log.error('comments', siteApiError(result))
+                return
+              }
+              root.remove()
+              log.info('Удалил комментарий', commentId(root))
+            } catch (error) {
+              log.error('comments', error)
+            }
           })
         })
         return false

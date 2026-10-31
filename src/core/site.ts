@@ -36,6 +36,93 @@ export function readPage<T>(read: (win: Window) => T | null | undefined): T | un
   }
 }
 
+export interface SiteParams {
+  name?: string
+  CK?: string
+  sid?: string | number
+  nid?: number | string
+}
+
+export interface SiteApiResult {
+  code?: number | string
+  error?: string
+  notification?: {
+    text?: string
+  }
+}
+
+interface SiteSpaces {
+  params?: SiteParams
+  api?: (method: string, params: Record<string, unknown>, callback: (data: SiteApiResult | null) => void) => void
+  apiError?: (data: SiteApiResult) => string
+  tabId?: () => string | number
+}
+
+export const siteSpaces = () => readPage(win => (win as Window & { Spaces?: SiteSpaces }).Spaces)
+
+export const siteTabId = () => siteSpaces()?.tabId?.() ?? ''
+
+const apiWaitMs = 10000
+
+function apiResult(code: number, error: string) {
+  const result: SiteApiResult = { code }
+  if (error) result.error = error
+  return result
+}
+
+export function siteApiError(result: SiteApiResult | null | undefined) {
+  if (result?.error) return result.error
+  const describe = siteSpaces()?.apiError
+  if (result && describe) return describe(result)
+  return 'Spaces API is not ready'
+}
+
+export function siteApi(method: string, params: Record<string, unknown> = {}) {
+  const spaces = siteSpaces()
+  const call = spaces?.api
+  if (!call) return Promise.reject(new Error('Spaces API is not ready'))
+
+  return new Promise<SiteApiResult>((resolve, reject) => {
+    let settled = false
+    const timer = window.setTimeout(() => {
+      if (settled) return
+      settled = true
+      reject(new Error('Spaces API timed out'))
+    }, apiWaitMs)
+
+    const finish = (result: SiteApiResult | Error) => {
+      if (settled) return
+      settled = true
+      window.clearTimeout(timer)
+      if (result instanceof Error) reject(result)
+      else resolve(result)
+    }
+
+    try {
+      // asyncApi резолвит промис страницы целым ответом вместе с widget.
+      // В песочнице скрипта такой промис может не завершиться, хотя комментарий уже удалён.
+      call(method, params, (data) => {
+        if (!data) {
+          finish(new Error('Spaces API request was cancelled'))
+          return
+        }
+        const code = Number(data.code)
+        let error = ''
+        if (code !== 0) {
+          try {
+            error = spaces.apiError?.(data) || data.error || ''
+          } catch {
+            error = data.error || ''
+          }
+        }
+        finish(apiResult(code, error))
+      })
+    } catch (error) {
+      finish(error instanceof Error ? error : new Error('Spaces API is not ready'))
+    }
+  })
+}
+
 export function loadSiteModules(names: string[], onLoad: () => void, onError?: () => void) {
   const require = readPage(win => win.__require)
   if (typeof require === 'function') {
@@ -96,6 +183,15 @@ export const session = {
   onlineNick: null as string | null,
   playerTrack: 0,
   version: versionNumber,
+}
+
+export function readSession() {
+  const params = siteSpaces()?.params
+  if (!params?.name || !params.CK) return false
+  session.username = params.name
+  session.ck = params.CK
+  session.sid = params.sid == null ? '' : String(params.sid)
+  return true
 }
 
 export const pathIndex = {

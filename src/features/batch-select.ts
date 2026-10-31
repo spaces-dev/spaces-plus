@@ -1,4 +1,4 @@
-import { attentionTitle, modalMessage, notice } from '@/core/modals'
+import { attentionTitle, modalMessage, notice, removeAlert } from '@/core/modals'
 
 export const listButtonClass = 'user__tools-link table__cell sp_btn-list'
 export const okIcon = 'ico_ok_blue'
@@ -32,9 +32,14 @@ export function warnNothingSelected(phrase: string) {
 export async function runDeleteQueue<T>(items: readonly T[], word: (count: number) => string, remove: (item: T) => Promise<void>) {
   const total = items.length
   let left = total
-  for (const item of items) {
-    modalMessage(`Осталось удалить ${left} из ${total} ${word(left)}`, deleteWaitMarkup)
-    left -= 1
-    await remove(item)
+  try {
+    for (const item of items) {
+      modalMessage(`Осталось удалить ${left} из ${total} ${word(left)}`, deleteWaitMarkup)
+      left -= 1
+      await remove(item)
+    }
+  } finally {
+    removeAlert()
+    for (const dialog of document.querySelectorAll('.sp-dialog')) dialog.remove()
   }
 }

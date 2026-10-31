@@ -2,7 +2,7 @@ import type { SessionCheck } from './session-check'
 import { http } from './core/http'
 import { log } from './core/log'
 import { startRuntime } from './core/runtime'
-import { session } from './core/site'
+import { readSession, session } from './core/site'
 import { features } from './features/index'
 import { showUserStatus } from './user-status'
 
@@ -13,6 +13,13 @@ async function boot() {
   }
 
   try {
+    if (readSession()) {
+      log.info('Проверка сессии', 'Spaces.params')
+      if (!showUserStatus(undefined)) return
+      startRuntime(features)
+      return
+    }
+
     const response = await http<SessionCheck>(`${location.origin}/api/session/check`, { method: 'POST' })
     const body = response.parsedBody
     log.info('Проверка сессии', response)

@@ -9,7 +9,12 @@ import { baseUrl } from '@/core/site'
 import { withStyle } from '@/core/with-style'
 import friendsCss from '@/styles/features/friends.scss?inline'
 import { toggleId } from '@/types/toggles'
-import { friendsOptionsId, friendsPanelId, friendsRange, renderFriendsOptions } from './options'
+import {
+  friendsOptionsId,
+  friendsPanelId,
+  friendsRange,
+  renderFriendsOptions,
+} from './options'
 
 const friendsStyleId = 'SP_STYLE_FRIENDS'
 const collapsedClass = 'sp-friends-collapsed'
@@ -71,6 +76,8 @@ export const friendsOnline: Feature = defineToggle({
     let toggleAbort: AbortController | null = null
     let savedExpanded = getSettings().friendsSet.expanded
     let collapsed = !savedExpanded
+    let loadedCount: number | null = null
+    let requestId = 0
 
     const applyCollapsed = (panel: HTMLElement) => {
       const saved = getSettings().friendsSet.expanded
@@ -101,8 +108,9 @@ export const friendsOnline: Feature = defineToggle({
     }
 
     const loadFriends = (panel: HTMLElement, modern: boolean) => {
+      const ticket = ++requestId
       http<FriendsOnline>(`${baseUrl}${friendsOnlinePath}`, { proxy: true }).then((response) => {
-        if (!panel.isConnected) return
+        if (ticket !== requestId || !panel.isConnected) return
         const raw = response.parsedBody?.tabbed_panel?.links?.[1]?.content?.list ?? []
         const list = Object.values(raw).filter((friend): friend is FriendListItem => Boolean(friend?.name))
         if (!list.length) return
@@ -125,6 +133,8 @@ export const friendsOnline: Feature = defineToggle({
       const panel = friendsPanel()
       if (count <= 0) {
         panel?.remove()
+        loadedCount = null
+        requestId += 1
         countNode.title = ''
         return
       }
@@ -133,6 +143,7 @@ export const friendsOnline: Feature = defineToggle({
       const section = countNode.closest('.sidebar__section') ?? countNode.parentElement?.parentElement?.parentElement
       if (!item && !section) return
 
+      const modern = Boolean(item)
       const place = (node: HTMLElement) => {
         if (item) {
           if (item.nextElementSibling !== node) item.after(node)
@@ -145,10 +156,14 @@ export const friendsOnline: Feature = defineToggle({
         place(panel)
         applyCollapsed(panel)
         bindToggle(countNode)
+        if (loadedCount !== count) {
+          loadedCount = count
+          loadFriends(panel, modern)
+        }
         return
       }
 
-      const modern = Boolean(item)
+      loadedCount = count
       const next = el('div', {
         id: friendsPanelId,
         className: modern ? 'sidebar__section' : 'list-link__wrap',
