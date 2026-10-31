@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Spaces Plus
-// @version     4.0.1
+// @version     4.0.2
 // @description 🚀 Powerful userscript for Spaces.im
 // @author      Vitalij Ryndin <sys@crashmax.ru> https://crashmax.ru
 // @license     MIT
