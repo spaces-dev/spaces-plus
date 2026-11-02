@@ -89,11 +89,15 @@ function spoilerPiece(element: HTMLElement): Piece[] {
 }
 
 function imagePiece(element: HTMLElement): Piece[] {
+  const alt = element.getAttribute('alt') ?? ''
+  const src = element.getAttribute('src') ?? ''
   const coded = element.classList.contains('smile') || element.classList.contains('emoji')
-  const value = coded
-    ? element.getAttribute('alt') ?? ''
-    : element.getAttribute('src') ?? ''
-  return value ? [{ type: 'text', value }] : []
+  if (coded) return alt ? [{ type: 'text', value: alt }] : []
+  if (element.classList.contains('stick')) {
+    const value = alt || src
+    return value ? [{ type: 'text', value }] : []
+  }
+  return src ? [{ type: 'text', value: src }] : []
 }
 
 function readPostedNights() {

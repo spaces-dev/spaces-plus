@@ -26,6 +26,8 @@ describe('toSource', () => {
     expect(sourceOf('<img class="smile" alt=":cool4:">')).toBe(':cool4:')
     expect(sourceOf('<img class="smile" alt=":(" src="https://spaces.im/i/sm/webp/smile.webp">')).toBe(':(')
     expect(sourceOf('<img class="emoji" alt=":smile:" src="https://spaces.im/i/em/20/1F604_2x.png">')).toBe(':smile:')
+    expect(sourceOf('<div class="image_limit"><img class="stick" alt=":compdude11" src="https://spaces.im/i/st/100/1/compdude11_2x.png?1?2"></div>')).toBe(':compdude11')
+    expect(sourceOf('<img class="stick" src="https://spaces.im/i/st/100/1/compdude11_2x.png?1?2">')).toBe('https://spaces.im/i/st/100/1/compdude11_2x.png?1?2')
     expect(sourceOf('<img src="https://example/pic.jpg" alt="pic">')).toBe('https://example/pic.jpg')
   })
 
