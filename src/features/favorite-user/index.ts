@@ -61,7 +61,7 @@ function isProfile(section: string | undefined, page: string | undefined) {
 
 export const favoriteUser: Feature = defineToggle({
   id: toggleId.favorite,
-  title: 'Добавить пользователя в закладки',
+  title: 'Кнопка добавления профиля в закладки',
   description: 'На странице пользователя появляется кнопка «В закладки». Повторное нажатие убирает этого пользователя из закладок.',
   start: withStyle(favoriteStyleId, favoriteCss, (ctx) => {
     const stop = ctx.onDom(() => {

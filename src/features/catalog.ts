@@ -20,10 +20,12 @@ export const settingsSections: SettingsSection[] = [
     ],
   },
   {
-    title: 'Сбор',
+    title: 'Интерфейс',
     ids: [
-      toggle.coins,
-      toggle.karma,
+      toggle.oldHeader,
+      toggle.redirect,
+      toggle.scroll,
+      toggle.rightbar,
     ],
   },
   {
@@ -32,15 +34,14 @@ export const settingsSections: SettingsSection[] = [
       toggle.player,
       toggle.gallery,
       toggle.playback,
+      toggle.flashPlayer,
     ],
   },
   {
-    title: 'Интерфейс',
+    title: 'Сбор',
     ids: [
-      toggle.oldHeader,
-      toggle.scroll,
-      toggle.rightbar,
-      toggle.redirect,
+      toggle.coins,
+      toggle.karma,
     ],
   },
 ]

@@ -1,11 +1,15 @@
 import type { Feature } from '@/core/feature'
 import { el } from '@zero-dependency/dom'
 import { log } from '@/core/log'
-import { alertContentSelector, closable, modalMessage, quietButtonClass } from '@/core/modals'
+import {
+  alertContentSelector,
+  closable,
+  modalMessage,
+  quietButtonClass,
+} from '@/core/modals'
 import { cookies, storageKey } from '@/core/settings-store'
-import { communityUrl, host, plusSettingsUrl } from '@/core/site'
+import { communityUrl, plusSettingsUrl } from '@/core/site'
 
-const skippedHosts = new Set(['spaces-blogs.com', 'spac1.net'])
 const officialSite = 'https://spaces-dev.github.io'
 const warnColor = '#f86934'
 
@@ -14,7 +18,7 @@ export const firstLaunch: Feature = {
   core: true,
   start: () => {
     try {
-      if (cookies.get(storageKey.launch) !== null || skippedHosts.has(host)) return
+      if (cookies.get(storageKey.launch) !== null) return
 
       modalMessage(
         'Спасибо за установку Spaces Plus',

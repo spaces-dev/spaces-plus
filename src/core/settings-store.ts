@@ -73,6 +73,7 @@ export const defaultSettings = {
   angle: 0,
   [toggleId.karma]: true,
   [toggleId.playback]: true,
+  [toggleId.flashPlayer]: true,
   videoSpeed: 1,
   upVersion: versionNumber,
   hideNotify: {

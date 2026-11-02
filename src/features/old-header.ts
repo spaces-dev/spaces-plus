@@ -41,7 +41,7 @@ function swap(remember: boolean) {
 
 export const oldHeader: Feature = defineToggle({
   id: toggleId.oldHeader,
-  title: 'Старое положение кнопок в шапке',
+  title: 'Старое расположение кнопок почты и ленты в шапке',
   description: 'Функция меняет кнопку почты и ленты местами, как было раньше.',
   start: (ctx) => {
     const stop = ctx.onDom(() => {

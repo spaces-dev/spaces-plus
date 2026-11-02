@@ -8,6 +8,7 @@ import { deleteReaders } from './delete-readers'
 import { disableRedirect } from './disable-redirect'
 import { favoriteUser } from './favorite-user'
 import { firstLaunch } from './first-launch'
+import { flashPlayer } from './flash-player'
 import { friendsOnline } from './friends-online'
 import { galleryRotate } from './gallery-rotate'
 import { halloween } from './halloween/halloween'
@@ -39,6 +40,7 @@ const configurable = [
   galleryRotate,
   karma,
   videoSpeed,
+  flashPlayer,
   recentSmiles,
   friendsOnline,
   bodyStyle,

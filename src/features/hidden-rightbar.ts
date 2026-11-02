@@ -1,4 +1,5 @@
 import type { Feature } from '@/core/feature'
+import { setChecked } from '@/core/checkbox'
 import { byId } from '@/core/dom'
 import { defineToggle } from '@/core/feature'
 import { modalMessage, notice } from '@/core/modals'
@@ -28,7 +29,7 @@ export const hiddenRightbar: Feature = defineToggle({
     if (!enabled || !settingEnabled(toggleId.weather)) return
     setSetting(toggleId.weather, false)
     const box = byId<HTMLInputElement>(toggleId.weather)
-    if (box) box.checked = false
+    if (box) setChecked(box, false)
     byId(weatherOptionsId)?.remove()
     modalMessage('Скрыть правое меню', 'Виджет погоды выключен: он показывается в правом меню.', notice)
   },

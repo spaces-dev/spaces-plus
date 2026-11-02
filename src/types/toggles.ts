@@ -13,6 +13,7 @@ export const toggleId = {
   gallery: 'grotate',
   karma: 'karma',
   playback: 'playback',
+  flashPlayer: 'flashPlayer',
   recents: 'recents',
   friends: 'friendsOn',
   background: 'bodystyle',

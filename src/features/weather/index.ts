@@ -8,8 +8,20 @@ import { getSettings, settingEnabled } from '@/core/settings-store'
 import { withStyle } from '@/core/with-style'
 import weatherCss from '@/styles/features/weather.scss?inline'
 import { toggleId } from '@/types/toggles'
-import { bindWeatherWidget, detectCity, getWeather, readWeatherCache, unixTime } from './api'
-import { hPaToMmHg, openWeather, weatherOptionsId, weatherPollMs, weatherWidgetId } from './constants'
+import {
+  bindWeatherWidget,
+  detectCity,
+  getWeather,
+  readWeatherCache,
+  unixTime,
+} from './api'
+import {
+  hPaToMmHg,
+  openWeather,
+  weatherOptionsId,
+  weatherPollMs,
+  weatherWidgetId,
+} from './constants'
 import { renderWeatherOptions } from './options'
 
 const weatherStyleId = 'SP_STYLE_WEATHER'

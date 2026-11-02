@@ -46,6 +46,7 @@ export interface Settings {
   angle: number
   [toggleId.karma]: boolean
   [toggleId.playback]: boolean
+  [toggleId.flashPlayer]: boolean
   videoSpeed: number
   upVersion: number | string
   hideNotify: HideNotify

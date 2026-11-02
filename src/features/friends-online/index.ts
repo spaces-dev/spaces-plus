@@ -68,7 +68,7 @@ function friendItem(friend: FriendListItem, modern: boolean) {
 export const friendsOnline: Feature = defineToggle({
   id: toggleId.friends,
   title: 'Панель друзей онлайн',
-  description: `Функция добавляет в левое меню панель с друзьями онлайн. Для работы необходимо включить раздел <a href="${baseUrl}${friendsSidebarPath}">Друзья</a>, если он выключен.</br></br>Панель ограничена от ${friendsRange.min} до ${friendsRange.max} друзей онлайн.`,
+  description: `Функция добавляет панель с друзьями онлайн в сайдбар. Для работы необходимо включить раздел <a href="${baseUrl}${friendsSidebarPath}">Друзья</a>, если он выключен.</br></br>Панель ограничена от ${friendsRange.min} до ${friendsRange.max} друзей онлайн.`,
   optionsId: friendsOptionsId,
   renderOptions: renderFriendsOptions,
   start: withStyle(friendsStyleId, friendsCss, (ctx) => {

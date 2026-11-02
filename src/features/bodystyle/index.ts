@@ -15,7 +15,7 @@ export const bodyStyle: Feature = defineToggle({
   id: toggleId.background,
   title: 'Фон сайта',
   listed: false,
-  description: 'Позволяет украшать фон сайта. В подборке есть набор изображений, также можно переключиться на цветной фон.',
+  description: 'Позволяет изменять фон сайта. В подборке есть набор изображений, также можно переключиться на использование цвета.',
   optionsId: bodyDom.panel,
   renderOptions: renderBackgroundOptions,
   start: (ctx) => {

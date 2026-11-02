@@ -38,6 +38,11 @@ export default defineConfig((config) => {
           icon: 'icons/logo_96.png',
           homepage: basePath,
           match: DOMAINS.map(domain => `https://${domain}/*`),
+          connect: [
+            ...DOMAINS.map(domain => domain.replace(/^\*\./, '')),
+            'spac.me',
+            'fp.spac.me',
+          ],
         },
         server: {
           file: true,

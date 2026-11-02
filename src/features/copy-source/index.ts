@@ -198,7 +198,7 @@ function dropDetached() {
 
 export const copySource: Feature = defineToggle({
   id: toggleId.copySource,
-  title: 'Скопировать исходный текст',
+  title: 'Копирование исходного текста',
   description: 'На записи появляется кнопка, в меню комментария и в почте — пункт «Исходный текст».',
   start: ctx => ctx.onDom(() => {
     dropDetached()
