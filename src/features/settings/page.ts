@@ -32,7 +32,6 @@ import { plusSettingsTitle, settingsAreaId, settingsDom, settingsGroupId } from 
 
 const crumbSep = '<span class="location-bar__sep ico"></span>'
 const unsupportedClass = 'stnd-block-yellow'
-const authorNick = 'crashmax'
 const telegramUrl = 'https://t.me/spaces_dev'
 const heartIcon = '/i/dark/em/36/2764-FE0F.png'
 const subviewTitle = (title: string) => `Spaces Plus: ${title}`
@@ -160,7 +159,7 @@ function paintAbout() {
   const title = el('div', { className: 'grey' })
   title.append(
     'Разработано ',
-    aboutLink(`${baseUrl}/mysite/index/${authorNick}`, authorNick),
+    aboutLink(`${baseUrl}/mysite/index/anomaiy`, 'crashmax'),
     ' с любовью ',
     el('span', { className: 'heart', innerHTML: `<img src="${heartIcon}" alt="❤️" width="16" height="16">` }),
     el('div', {
