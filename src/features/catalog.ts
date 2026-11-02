@@ -16,6 +16,7 @@ export const settingsSections: SettingsSection[] = [
       toggle.readers,
       toggle.copySource,
       toggle.favorite,
+      toggle.profileBypass,
     ],
   },
   {

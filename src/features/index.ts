@@ -11,6 +11,7 @@ import { firstLaunch } from './first-launch'
 import { friendsOnline } from './friends-online'
 import { galleryRotate } from './gallery-rotate'
 import { halloween } from './halloween/halloween'
+import { hiddenProfile } from './hidden-profile'
 import { hiddenRightbar } from './hidden-rightbar'
 import { karma } from './karma'
 import { newYear } from './new-year'
@@ -34,6 +35,7 @@ const configurable = [
   scrollMove,
   hiddenRightbar,
   favoriteUser,
+  hiddenProfile,
   galleryRotate,
   karma,
   videoSpeed,

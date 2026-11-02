@@ -41,6 +41,7 @@ export interface Settings {
   [toggleId.scroll]: boolean
   [toggleId.rightbar]: boolean
   [toggleId.favorite]: boolean
+  [toggleId.profileBypass]: boolean
   [toggleId.gallery]: boolean
   angle: number
   [toggleId.karma]: boolean

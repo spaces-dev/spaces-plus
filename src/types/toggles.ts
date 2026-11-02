@@ -9,6 +9,7 @@ export const toggleId = {
   scroll: 'rscroll',
   rightbar: 'hrightbar',
   favorite: 'favorite',
+  profileBypass: 'profileBypass',
   gallery: 'grotate',
   karma: 'karma',
   playback: 'playback',

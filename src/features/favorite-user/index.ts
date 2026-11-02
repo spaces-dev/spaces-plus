@@ -8,6 +8,7 @@ import { log } from '@/core/log'
 import { modalConfirm } from '@/core/modals'
 import { baseUrl, pathAt, pathIndex, session } from '@/core/site'
 import { withStyle } from '@/core/with-style'
+import { isClosedAccount } from '@/features/hidden-profile/links'
 import favoriteCss from '@/styles/features/favorite.scss?inline'
 import { toggleId } from '@/types/toggles'
 
@@ -64,6 +65,11 @@ export const favoriteUser: Feature = defineToggle({
   description: 'На странице пользователя появляется кнопка «В закладки». Повторное нажатие убирает этого пользователя из закладок.',
   start: withStyle(favoriteStyleId, favoriteCss, (ctx) => {
     const stop = ctx.onDom(() => {
+      if (isClosedAccount(document)) {
+        document.getElementById(favoriteCellId)?.remove()
+        return
+      }
+
       const section = pathAt(pathIndex.section)
       const page = pathAt(pathIndex.page)
       const nickname = pathAt(pathIndex.slug)

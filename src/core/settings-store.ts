@@ -68,6 +68,7 @@ export const defaultSettings = {
   [toggleId.scroll]: false,
   [toggleId.rightbar]: false,
   [toggleId.favorite]: true,
+  [toggleId.profileBypass]: true,
   [toggleId.gallery]: true,
   angle: 0,
   [toggleId.karma]: true,

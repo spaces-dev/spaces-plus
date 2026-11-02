@@ -99,8 +99,6 @@ export function siteApi(method: string, params: Record<string, unknown> = {}) {
     }
 
     try {
-      // asyncApi резолвит промис страницы целым ответом вместе с widget.
-      // В песочнице скрипта такой промис может не завершиться, хотя комментарий уже удалён.
       call(method, params, (data) => {
         if (!data) {
           finish(new Error('Spaces API request was cancelled'))
