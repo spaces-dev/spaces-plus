@@ -59,7 +59,7 @@ export function renderBackup(target: Element) {
     const apply = el('button', {
       className: 'user__tools-link table__cell sp_btn sp-separator-top',
       style: { borderRight: 'none' },
-      innerHTML: '<span class="ico ico_ok_darkblue"></span> Применить изменения',
+      innerHTML: '<span class="ico ico_ok"></span> Применить изменения',
     })
     apply.onclick = () => {
       try {
