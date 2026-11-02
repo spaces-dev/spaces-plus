@@ -32,7 +32,7 @@ import { plusSettingsTitle, settingsAreaId, settingsDom, settingsGroupId } from 
 
 const crumbSep = '<span class="location-bar__sep ico"></span>'
 const unsupportedClass = 'stnd-block-yellow'
-const authorNick = 'anomaiy'
+const authorNick = 'crashmax'
 const telegramUrl = 'https://t.me/spaces_dev'
 const heartIcon = '/i/dark/em/36/2764-FE0F.png'
 const subviewTitle = (title: string) => `Spaces Plus: ${title}`

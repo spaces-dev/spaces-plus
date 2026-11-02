@@ -15,6 +15,7 @@
     "dev": "vite",
     "build": "vite build",
     "type-check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --fix --cache"
   },
@@ -26,12 +27,15 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "10.0.0",
+    "@types/node": "22.20.5",
     "eslint": "9.39.5",
     "eslint-plugin-format": "2.0.1",
+    "happy-dom": "21.0.4",
     "prettier-plugin-css-order": "2.2.0",
-    "sass-embedded": "1.107.0",
+    "sass-embedded": "1.107.1",
     "typescript": "6.0.3",
     "vite": "8.3.5",
-    "vite-userscript-plugin": "2.5.5"
+    "vite-userscript-plugin": "2.5.5",
+    "vitest": "5.0.5"
   }
 }

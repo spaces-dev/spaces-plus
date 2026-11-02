@@ -33,6 +33,7 @@ export interface WeatherSet {
 export interface Settings {
   [toggleId.readers]: boolean
   [toggleId.comments]: boolean
+  [toggleId.copySource]: boolean
   [toggleId.oldHeader]: boolean
   [toggleId.player]: boolean
   [toggleId.redirect]: boolean

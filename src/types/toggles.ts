@@ -1,6 +1,7 @@
 export const toggleId = {
   readers: 'readersd',
   comments: 'comments',
+  copySource: 'copysrc',
   oldHeader: 'oldheader',
   player: 'playerdn',
   redirect: 'dredirect',

@@ -22,6 +22,8 @@ jobs:
           runtime: node@22
           cache: true
 
+      - run: pnpm test
+
       - run: pnpm build
 
       - name: Deploy to GitHub Pages

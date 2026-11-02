@@ -2,6 +2,7 @@ import { baseStyles } from './base-styles'
 import { bodyStyle } from './bodystyle'
 import { checkUpdates } from './check-updates'
 import { coins } from './coins'
+import { copySource } from './copy-source'
 import { deleteComments } from './delete-comments'
 import { deleteReaders } from './delete-readers'
 import { disableRedirect } from './disable-redirect'
@@ -25,6 +26,7 @@ import { weatherWidget } from './weather'
 const configurable = [
   deleteReaders,
   deleteComments,
+  copySource,
   oldHeader,
   playerDownload,
   disableRedirect,

@@ -11,19 +11,36 @@ export interface SettingsSection {
 export const settingsSections: SettingsSection[] = [
   {
     title: 'Контент',
-    ids: [toggle.comments, toggle.readers, toggle.favorite],
+    ids: [
+      toggle.comments,
+      toggle.readers,
+      toggle.copySource,
+      toggle.favorite,
+    ],
   },
   {
     title: 'Сбор',
-    ids: [toggle.coins, toggle.karma],
+    ids: [
+      toggle.coins,
+      toggle.karma,
+    ],
   },
   {
     title: 'Медиа',
-    ids: [toggle.player, toggle.gallery, toggle.playback],
+    ids: [
+      toggle.player,
+      toggle.gallery,
+      toggle.playback,
+    ],
   },
   {
     title: 'Интерфейс',
-    ids: [toggle.oldHeader, toggle.scroll, toggle.rightbar, toggle.redirect],
+    ids: [
+      toggle.oldHeader,
+      toggle.scroll,
+      toggle.rightbar,
+      toggle.redirect,
+    ],
   },
 ]
 

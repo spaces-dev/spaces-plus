@@ -60,6 +60,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 export const defaultSettings = {
   [toggleId.readers]: false,
   [toggleId.comments]: false,
+  [toggleId.copySource]: true,
   [toggleId.oldHeader]: true,
   [toggleId.player]: true,
   [toggleId.redirect]: true,
