@@ -251,7 +251,7 @@ function openSettings(features: Feature[]) {
   const backup = sectionLink({
     id: backupFlag,
     icon: 'ico_shared',
-    label: backupTitle,
+    label: `<span class="grey">${backupTitle}</span>`,
     href: plusSettingsUrl(backupFlag),
   })
   backup.onclick = openSubview({
@@ -264,7 +264,7 @@ function openSettings(features: Feature[]) {
   const changelog = sectionLink({
     id: changelogFlag,
     icon: 'ico_history_blue',
-    label: changelogTitle,
+    label: `<span class="blue">${changelogTitle}</span>`,
     href: plusSettingsUrl(changelogFlag),
   })
   changelog.onclick = openSubview({
@@ -276,9 +276,9 @@ function openSettings(features: Feature[]) {
 
   const reset = el('a', {
     href: '#',
-    className: 'list-link list-link_arr',
+    className: 'list-link list-link_arr list-link_last',
     id: 'sp_plus_reset',
-    innerHTML: '<span class="ico ico_alert_red mr-14"></span>Сброс настроек',
+    innerHTML: '<span class="ico ico_alert_red mr-14"></span><span class="red">Сброс настроек</span>',
   })
   reset.onclick = () => {
     modalConfirm('Вы действительно хотите полностью сбросить настройки?', true, () => {
