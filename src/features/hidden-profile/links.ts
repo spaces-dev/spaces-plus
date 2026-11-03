@@ -111,10 +111,97 @@ export function hiddenProfilePage(section: string | undefined, page: string | un
   return false
 }
 
+const slugOf = (nick: string) => nick.trim().toLowerCase().replace(/_/g, '-')
+const fold = (value: string | undefined) => value?.trim().toLowerCase() ?? ''
+const queryKeys = new Set(['query', 'name', 'user'])
+
+export function profileBar(root: ParentNode) {
+  const crumbs = [...root.querySelectorAll('[id^="location_bar_1_"]')]
+    .filter(node => node.id !== 'location_bar_1_home')
+  return crumbs.at(-1)?.textContent ?? ''
+}
+
 export function profileNick(slug: string | undefined, bar: string) {
+  const key = slug?.trim() ?? ''
   const name = bar.trim()
-  if (slug && /^\d+$/.test(slug)) return name
-  return slug?.trim() || name
+  const named = name.toLowerCase()
+  if (key && /^\d+$/.test(key)) return named || key
+  if (key && named && slugOf(name) === key.toLowerCase()) return named
+  return key || name
+}
+
+function sectionAliases(slug: string | undefined, bar: string, key: string) {
+  const aliases = new Set<string>()
+  const foldedKey = fold(key)
+  const name = bar.trim()
+  const candidates = [slug, name, slugOf(name), name.replace(/-/g, '_')]
+  for (const value of candidates) {
+    const token = fold(value)
+    if (token && token !== foldedKey) aliases.add(token)
+  }
+  return aliases
+}
+
+function rewriteHref(href: string, aliases: Set<string>, key: string) {
+  if (!href || !aliases.size) return href
+  let url: URL
+  try {
+    url = new URL(href, 'https://spaces.im')
+  } catch {
+    return href
+  }
+  const parts = url.pathname.split('/')
+  let changed = false
+  for (let index = 0; index < parts.length; index++) {
+    const segment = parts[index]
+    if (!segment) continue
+    let decoded = segment
+    try {
+      decoded = decodeURIComponent(segment)
+    } catch {
+      decoded = segment
+    }
+    if (!aliases.has(decoded.toLowerCase())) continue
+    parts[index] = encodeURIComponent(key)
+    changed = true
+  }
+  if (changed) url.pathname = parts.join('/')
+  for (const name of queryKeys) {
+    const value = url.searchParams.get(name)
+    if (!value || !aliases.has(value.toLowerCase())) continue
+    url.searchParams.set(name, key)
+    changed = true
+  }
+  if (!changed) return href
+  if (/^https?:/i.test(href)) return url.href
+  return `${url.pathname}${url.search}${url.hash}`
+}
+
+function retargetLink(link: ProfileLink, aliases: Set<string>, key: string): ProfileLink {
+  return {
+    ...link,
+    href: rewriteHref(link.href, aliases, key),
+  }
+}
+
+export function retargetSections(model: ProfileModel, slug: string | undefined, bar: string): ProfileModel {
+  const key = profileNick(slug, bar)
+  const aliases = sectionAliases(slug, bar, key)
+  if (!aliases.size) return model
+  const gifts = model.gifts
+  return {
+    ...model,
+    nick: model.nick ? { ...model.nick, href: rewriteHref(model.nick.href, aliases, key) } : null,
+    tabs: model.tabs.map(tab => retargetLink(tab, aliases, key)),
+    sections: model.sections.map(section => retargetLink(section, aliases, key)),
+    gifts: gifts
+      ? {
+          ...gifts,
+          href: rewriteHref(gifts.href, aliases, key),
+          items: gifts.items.map(item => ({ ...item, href: rewriteHref(item.href, aliases, key) })),
+        }
+      : null,
+  }
 }
 
 export function contentHtml(raw: string) {

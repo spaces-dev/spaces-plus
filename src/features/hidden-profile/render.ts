@@ -147,10 +147,22 @@ export interface ProfileView {
   body: HTMLElement
 }
 
-export function renderProfile(model: ProfileModel): ProfileView {
+export interface ProfilePresent {
+  tabs: boolean
+  sections: boolean
+}
+
+export function profilePresent(root: ParentNode): ProfilePresent {
+  return {
+    tabs: Boolean(root.querySelector('.tabs')),
+    sections: Boolean(root.querySelector('.widgets-group.links-group:not(.dropdown-menu)')),
+  }
+}
+
+export function renderProfile(model: ProfileModel, present: ProfilePresent = { tabs: false, sections: false }): ProfileView {
   const body = mark(el('div', { id: profileRootId }))
-  if (model.tabs.length) body.append(renderTabs(model.tabs))
-  if (model.sections.length) body.append(renderSections(model.sections))
+  if (model.tabs.length && !present.tabs) body.append(renderTabs(model.tabs))
+  if (model.sections.length && !present.sections) body.append(renderSections(model.sections))
   if (model.gifts) body.append(renderGifts(model.gifts))
   return {
     card: hasCard(model) ? renderCard(model) : null,

@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { contentHtml, fallbackProfile, fallbackSections, hiddenProfilePage, isClosedAccount, isHiddenProfile, parseProfile, profileNick } from './links'
-import { mountProfile, renderProfile } from './render'
+import {
+  contentHtml,
+  fallbackProfile,
+  fallbackSections,
+  hiddenProfilePage,
+  isClosedAccount,
+  isHiddenProfile,
+  parseProfile,
+  profileBar,
+  profileNick,
+  retargetSections,
+} from './links'
+import { mountProfile, profilePresent, renderProfile } from './render'
 
 const guestHtml = `
   <div class="widgets-group widgets-group_top wbg">
@@ -89,8 +100,17 @@ describe('hidden profile', () => {
   })
 
   it('keeps the slug and takes the location bar for a numeric id', () => {
+    const crumbs = mount(`
+      <span id="location_bar_1_home"></span>
+      <span id="location_bar_1_0">Люди</span>
+      <span id="location_bar_1_1">BCE_3AKPbIT0</span>
+    `)
+    expect(profileBar(crumbs)).toBe('BCE_3AKPbIT0')
     expect(profileNick('alex69tm', 'Alex69tm')).toBe('alex69tm')
     expect(profileNick('66', 'max')).toBe('max')
+    expect(profileNick('62641775', '_751_AlenkaMosc')).toBe('_751_alenkamosc')
+    expect(profileNick('bce-3akpbit0', profileBar(crumbs))).toBe('bce_3akpbit0')
+    expect(profileNick('ponikigogo', 'ponikigogo')).toBe('ponikigogo')
   })
 
   it('reads the guest profile ajax payload', () => {
@@ -146,6 +166,63 @@ describe('hidden profile', () => {
     expect(hrefs).toContain('/music/user/ponikigogo/list/-/')
     expect(hrefs).toContain('/anketa/index/ponikigogo/')
     expect(fallbackSections('ponikigogo', true).some(section => section.href.includes('/anketa/'))).toBe(false)
+    const underscored = fallbackSections('bce_3akpbit0').map(section => section.href)
+    expect(underscored).toContain('/guestbook/index/bce_3akpbit0/')
+    expect(underscored).toContain('/friends/?name=bce_3akpbit0')
+    const byNick = fallbackSections('_751_alenkamosc').map(section => section.href)
+    expect(byNick).toContain('/pictures/user/_751_alenkamosc/list/-/')
+    expect(byNick).toContain('/forums/search_user/?query=_751_alenkamosc')
+  })
+
+  it('rewrites dashed and id-only section links to the site key', () => {
+    const dashed = parseProfile(`
+      <a class="mysite-link" href="/mysite/index/bce-3akpbit0/"><span class="mysite-nick">BCE_3AKPbIT0</span></a>
+      <div class="tabs"><table><tr>
+        <td class="table__cell tabs__item"><a class="tabs__link" href="/anketa/index/bce-3akpbit0/">Анкета</a></td>
+      </tr></table></div>
+      <div class="widgets-group links-group">
+        <a class="list-link" href="/guestbook/index/bce-3akpbit0/"><span class="js-text">Гостевая</span></a>
+        <a class="list-link" href="/friends/?name=bce-3akpbit0"><span class="js-text">Друзья</span></a>
+      </div>
+      <div class="widgets-group">
+        <div class="b-title">
+          <a class="b-title__link" href="/gifts/user_list/bce-3akpbit0/"><h6 class="span">Подарки</h6></a>
+        </div>
+        <span class="present"><a href="/gifts/user_list/bce-3akpbit0/#gift1"><img alt="box" src="/i/gifts/40/box.png"></a></span>
+      </div>
+    `)
+    expect(dashed).toBeTruthy()
+    if (!dashed) return
+    const fixed = retargetSections(dashed, 'bce-3akpbit0', 'BCE_3AKPbIT0')
+    expect(fixed.nick?.href).toBe('/mysite/index/bce_3akpbit0/')
+    expect(fixed.tabs[0]?.href).toBe('/anketa/index/bce_3akpbit0/')
+    expect(fixed.sections.map(section => section.href)).toEqual([
+      '/guestbook/index/bce_3akpbit0/',
+      '/friends/?name=bce_3akpbit0',
+    ])
+    expect(fixed.gifts?.href).toBe('/gifts/user_list/bce_3akpbit0/')
+    expect(fixed.gifts?.items[0]?.href).toBe('/gifts/user_list/bce_3akpbit0/#gift1')
+
+    const byId = parseProfile(`
+      <div class="widgets-group links-group">
+        <a class="list-link" href="/guestbook/index/62641775/"><span class="js-text">Гостевая</span></a>
+        <a class="list-link" href="/pictures/user/62641775/list/-/"><span class="js-text">Фотографии</span></a>
+      </div>
+    `)
+    expect(byId).toBeTruthy()
+    if (!byId) return
+    const nickFixed = retargetSections(byId, '62641775', '_751_AlenkaMosc')
+    expect(nickFixed.sections.map(section => section.href)).toEqual([
+      '/guestbook/index/_751_alenkamosc/',
+      '/pictures/user/_751_alenkamosc/list/-/',
+    ])
+
+    const guest = parseProfile(guestHtml)
+    expect(guest).toBeTruthy()
+    if (!guest) return
+    const same = retargetSections(guest, 'megajoker', 'MegaJokeR')
+    expect(same.sections[0]?.href).toBe('/guestbook/index/megajoker/')
+    expect(same.sections[1]?.href).toBe('/friends/?name=MegaJokeR')
   })
 
   it('renders a guest profile with the site classes', () => {
@@ -187,6 +264,48 @@ describe('hidden profile', () => {
     const tab = view.body.querySelector('.tabs__item')
     expect(tab).toBeInstanceOf(HTMLTableCellElement)
     if (tab instanceof HTMLTableCellElement) expect(tab.width).toBe('50%')
+  })
+
+  it('skips tabs and the section list when the profile already has them', () => {
+    const page = mount(`
+      <div id="main">
+        <div class="tabs"><span class="tabs__link">Профиль</span></div>
+        <div class="widgets-group links-group">
+          <a class="list-link" href="/guestbook/index/dizmo/"><span class="js-text">Гостевая</span></a>
+        </div>
+        <div class="widgets-group links-group dropdown-menu">
+          <a class="list-link" href="/friends/add/?friend=dizmo"><span class="js-text">Дружить</span></a>
+        </div>
+        <div class="js-pending-item">
+          <div class="widgets-group widgets-group_top">
+            <div class="ico_xlarge_noaccess"></div>
+          </div>
+        </div>
+      </div>
+    `)
+    const root = page.querySelector('#main')
+    const pending = page.querySelector('.js-pending-item')
+    expect(root).toBeTruthy()
+    expect(pending).toBeTruthy()
+    if (!root || !pending) return
+    expect(profilePresent(root)).toEqual({ tabs: true, sections: true })
+    expect(profilePresent(mount('<div class="widgets-group links-group dropdown-menu"></div>'))).toEqual({
+      tabs: false,
+      sections: false,
+    })
+    const profile = parseProfile(guestHtml)
+    expect(profile).toBeTruthy()
+    if (!profile) return
+    const view = renderProfile(profile, profilePresent(root))
+    mountProfile(pending, view)
+    expect(view.body.querySelector('.tabs')).toBeNull()
+    expect(view.body.querySelector('.links-group')).toBeNull()
+    expect(view.body.querySelector('.present img')?.getAttribute('src')).toBe('/i/gifts/40/hbbox.png')
+    expect(root.querySelectorAll('.tabs')).toHaveLength(1)
+    expect(root.querySelectorAll('.widgets-group.links-group:not(.dropdown-menu)')).toHaveLength(1)
+    const tabsOnly = renderProfile(fallbackProfile('dizmo', true), { tabs: true, sections: false })
+    expect(tabsOnly.body.querySelector('.tabs')).toBeNull()
+    expect(tabsOnly.body.querySelector('a[href="/files/user/dizmo/list/-/"]')).toBeTruthy()
   })
 
   it('puts the action row inside the card', () => {

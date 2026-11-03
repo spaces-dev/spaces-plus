@@ -2,8 +2,17 @@ import type { Feature } from '@/core/feature'
 import { defineToggle } from '@/core/feature'
 import { baseUrl, pathAt, pathIndex } from '@/core/site'
 import { toggleId } from '@/types/toggles'
-import { contentHtml, fallbackProfile, hiddenProfilePage, isClosedAccount, parseProfile, profileNick } from './links'
-import { mountProfile, renderProfile } from './render'
+import {
+  contentHtml,
+  fallbackProfile,
+  hiddenProfilePage,
+  isClosedAccount,
+  parseProfile,
+  profileBar,
+  profileNick,
+  retargetSections,
+} from './links'
+import { mountProfile, profilePresent, renderProfile } from './render'
 
 const guestCookie = 'js_passed=2'
 const requestTimeout = 8000
@@ -46,7 +55,8 @@ function guestHtml(nick: string) {
 function place(model: ReturnType<typeof fallbackProfile>) {
   const pending = document.querySelector('.js-pending-item') ?? document.querySelector('#main')
   if (!pending) return
-  mountProfile(pending, renderProfile(model))
+  const root = pending.closest('#main') ?? pending
+  mountProfile(pending, renderProfile(model, profilePresent(root)))
 }
 
 function clearProfile() {
@@ -63,7 +73,9 @@ export const hiddenProfile: Feature = defineToggle({
     const stop = ctx.onDom(() => {
       if (!hiddenProfilePage(pathAt(pathIndex.section), pathAt(pathIndex.page), document)) return
 
-      const nick = profileNick(pathAt(pathIndex.slug), document.querySelector('#location_bar_1_0')?.textContent ?? '')
+      const slug = pathAt(pathIndex.slug)
+      const bar = profileBar(document)
+      const nick = profileNick(slug, bar)
       const key = location.pathname
       if (!nick || document.querySelector('[data-sp-profile]') || inflight === key) return
 
@@ -76,7 +88,7 @@ export const hiddenProfile: Feature = defineToggle({
           return
         }
         const parsed = html ? parseProfile(html) : null
-        place(parsed ?? fallbackProfile(nick, isClosedAccount(document)))
+        place(parsed ? retargetSections(parsed, slug, bar) : fallbackProfile(nick, isClosedAccount(document)))
         inflight = ''
       })
     })
