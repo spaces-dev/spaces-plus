@@ -6,7 +6,7 @@ import { log } from '@/core/log'
 import { withStyle } from '@/core/with-style'
 import flashPlayerCss from '@/styles/features/flash-player.scss?inline'
 import { toggleId } from '@/types/toggles'
-import { isSwfMagic, readSwfCard, swfBase } from './card'
+import { isSolStorage, isSwfMagic, readSwfCard, swfBase } from './card'
 
 const flashPlayerStyleId = 'SP_STYLE_FLASH'
 const ruffleVersion = '0.7.1'
@@ -61,6 +61,7 @@ let requestToken = 0
 let abortRequest = () => {}
 let mountedId = ''
 let ruffleTask: Promise<RuffleSource> | null = null
+let releaseStorage = () => {}
 
 function pageWindow() {
   try {
@@ -68,6 +69,48 @@ function pageWindow() {
   } catch {
     return window
   }
+}
+
+function dropSolEntries(storage: Storage) {
+  const keys: string[] = []
+  for (let index = 0; index < storage.length; index += 1) {
+    const key = storage.key(index)
+    if (!key) continue
+    const value = storage.getItem(key)
+    if (value && isSolStorage(value)) keys.push(key)
+  }
+  for (const key of keys) storage.removeItem(key)
+}
+
+function guardSolStorage(storage: Storage) {
+  const proto = Object.getPrototypeOf(storage) as Storage | null
+  if (!proto || typeof proto.setItem !== 'function') return () => {}
+  const write = proto.setItem
+  function guarded(this: Storage, key: string, value: string) {
+    if (isSolStorage(value)) return
+    write.call(this, key, value)
+  }
+  proto.setItem = guarded
+  return () => {
+    if (proto.setItem === guarded) proto.setItem = write
+  }
+}
+
+function holdSolStorage() {
+  releaseStorage()
+  releaseStorage = () => {}
+  try {
+    const storage = pageWindow().localStorage
+    dropSolEntries(storage)
+    releaseStorage = guardSolStorage(storage)
+  } catch (error) {
+    log.error('flash', error)
+  }
+}
+
+function releaseSolStorage() {
+  releaseStorage()
+  releaseStorage = () => {}
 }
 
 function ruffleSource(host: RuffleHost | undefined) {
@@ -318,10 +361,12 @@ export const flashPlayer: Feature = defineToggle({
   title: 'Запуск Flash файлов',
   description: 'На странице SWF-файла кнопка «Запустить» открывает плеер',
   start: withStyle(flashPlayerStyleId, flashPlayerCss, (ctx) => {
+    holdSolStorage()
     const stop = ctx.onDom(sync)
     return () => {
       stop()
       resetMounted()
+      releaseSolStorage()
     }
   }),
 })

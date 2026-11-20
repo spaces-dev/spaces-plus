@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { fileViewId, isSwfExtension, isSwfMagic, readSwfCard, swfBase, swfDownloadHref, swfFileName } from './card'
+import {
+  fileViewId,
+  isSolStorage,
+  isSwfExtension,
+  isSwfMagic,
+  readSwfCard,
+  swfBase,
+  swfDownloadHref,
+  swfFileName,
+} from './card'
 
 const viewPath = '/files/view/100553151/'
 const downloadHref = '/files/download/htz-cs15/file/f/token/100553151/0/hash/Swami_Shaggy-spaces.im.swf'
@@ -53,5 +62,13 @@ describe('flash card', () => {
     expect(isSwfMagic(Uint8Array.from([0x5A, 0x57, 0x53]))).toBe(true)
     expect(isSwfMagic(Uint8Array.from([0x3C, 0x68, 0x74]))).toBe(false)
     expect(isSwfMagic(Uint8Array.from([0x46, 0x57]))).toBe(false)
+  })
+
+  it('recognises a shared object stored as base64', () => {
+    const sol = btoa(String.fromCharCode(0x00, 0xBF, 0, 0, 0, 9, 0x54, 0x43, 0x53, 0x4F))
+    const swf = btoa(String.fromCharCode(0x46, 0x57, 0x53, 0x08))
+    expect(isSolStorage(sol)).toBe(true)
+    expect(isSolStorage('{"flashPlayer":true}')).toBe(false)
+    expect(isSolStorage(swf)).toBe(false)
   })
 })

@@ -5,6 +5,9 @@ const extSelector = '.js-vc_fileext'
 const downloadSelector = 'a.__adv_download, a[href*="/files/download/"]'
 const previewSelector = '.file-card__preview'
 const swfSignatures = new Set(['FWS', 'CWS', 'ZWS'])
+const solSignature = 'TCSO'
+const solSignatureAt = 6
+const solStorageLength = 16
 const fallbackName = 'movie.swf'
 
 export interface SwfCard {
@@ -58,6 +61,20 @@ export function isSwfMagic(bytes: Uint8Array) {
   if (bytes.length < 3) return false
   const signature = String.fromCharCode(bytes[0] ?? 0, bytes[1] ?? 0, bytes[2] ?? 0)
   return swfSignatures.has(signature)
+}
+
+export function isSolStorage(value: string) {
+  if (value.length < solStorageLength) return false
+  let bytes = ''
+  try {
+    bytes = atob(value)
+  } catch {
+    return false
+  }
+  const signatureEnd = solSignatureAt + solSignature.length
+  if (bytes.length < signatureEnd) return false
+  if (bytes.charCodeAt(0) !== 0x00 || bytes.charCodeAt(1) !== 0xBF) return false
+  return bytes.slice(solSignatureAt, signatureEnd) === solSignature
 }
 
 export function readSwfCard(root: ParentNode, pathname: string): SwfCard | null {
