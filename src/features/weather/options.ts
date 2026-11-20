@@ -112,10 +112,6 @@ export function renderWeatherOptions(anchor: HTMLElement) {
         innerHTML: `Интервал обновления:<div class="label__desc">от ${intervalRange.min} до ${intervalRange.max} минут</div>`,
       }),
       interval,
-      el('div', {
-        className: 'label__desc grey',
-        textContent: 'Локация и API-ключ сохраняются по Enter. Интервал записывается сразу. «Определить» определяет локацию по геолокации. Виджет показывается в правом меню и не работает вместе с функцией «Скрыть правое меню».',
-      }),
     ])
   })
 }

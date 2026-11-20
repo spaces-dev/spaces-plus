@@ -39,10 +39,6 @@ export function renderRecentOptions(anchor: HTMLElement) {
           innerHTML: `Хранить смайликов и стикеров:<div class="label__desc">от ${recentRange.min} до ${recentRange.max}</div>`,
         }),
         max,
-        el('div', {
-          className: 'label__desc grey',
-          textContent: 'С зажатым Shift в правом верхнем углу ячейки появляется плюс или крестик. Плюс добавляет смайл в недавние, крестик убирает. Клик по ячейке не закрывает меню. Без Shift клик вставляет код в поле и запоминает его.',
-        }),
       ]),
     ])
   })

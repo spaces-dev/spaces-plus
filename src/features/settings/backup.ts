@@ -43,7 +43,7 @@ export function renderBackup(target: Element) {
       notice.append(hide, el('div', {
         className: 'stnd-block-yellow',
         style: { padding: '16px' },
-        innerHTML: '<span class="ico ico_alert_red"></span>Внимание!</br></br><div style="font-size: small">Редактирование только для опытных пользователей. Перед правкой сделайте экспорт: если что-то пойдет не так, настройки можно импортировать обратн или сделать сброс.</div>',
+        innerHTML: '<span class="ico ico_alert_red"></span>Внимание!</br></br><div style="font-size: small">Редактирование только для опытных пользователей. Перед правкой сделайте экспорт: если что-то пойдет не так, настройки можно импортировать обратно или сделать сброс.</div>',
       }))
       target.append(notice)
     }

@@ -68,7 +68,7 @@ function renderWidget() {
 export const weatherWidget: Feature = defineToggle({
   id: toggleId.weather,
   title: 'Виджет погоды',
-  description: 'Отображает текущую погоду: температуру, облачность, влажность, давление и ветер.</br></br>Можно изменить локацию, API-ключ и интервал обновления.',
+  description: 'Отображает текущую погоду: температуру, облачность, влажность, давление и ветер.</br></br>Локация и API-ключ сохраняются по Enter. Виджет показывается в правом меню и не работает вместе с функцией «Скрыть правое меню».',
   desktopOnly: true,
   optionsId: weatherOptionsId,
   renderOptions: renderWeatherOptions,

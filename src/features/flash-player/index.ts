@@ -359,7 +359,7 @@ function sync() {
 export const flashPlayer: Feature = defineToggle({
   id: toggleId.flashPlayer,
   title: 'Запуск Flash файлов',
-  description: 'На странице SWF-файла кнопка «Запустить» открывает плеер',
+  description: 'На странице SWF-файла кнопка «Запустить» открывает плеер.',
   start: withStyle(flashPlayerStyleId, flashPlayerCss, (ctx) => {
     holdSolStorage()
     const stop = ctx.onDom(sync)
