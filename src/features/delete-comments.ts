@@ -5,7 +5,7 @@ import { setChecked, siteCheckbox } from '@/core/checkbox'
 import { defineToggle } from '@/core/feature'
 import { log } from '@/core/log'
 import { modalConfirm } from '@/core/modals'
-import { anchoredHref, siteApi, siteApiError, siteTabId } from '@/core/site'
+import { anchoredHref, siteApi, siteApiError, siteTabId, siteUrl } from '@/core/site'
 import { withStyle } from '@/core/with-style'
 import commentsCss from '@/styles/features/comments.scss?inline'
 import { toggleId } from '@/types/toggles'
@@ -43,8 +43,7 @@ const deleteLinkOf = (root: Element) => root.querySelector<HTMLAnchorElement>('a
 
 function queryOf(href: string) {
   const payload: Record<string, string> = {}
-  const url = new URL(href, location.href)
-  url.searchParams.forEach((value, key) => {
+  siteUrl(href, location.href)?.searchParams.forEach((value, key) => {
     payload[key] = value
   })
   return payload

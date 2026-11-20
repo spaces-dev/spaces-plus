@@ -20,7 +20,7 @@ describe('flash card', () => {
     const card = readSwfCard(document, `${viewPath}?Li=1`)
     expect(card?.id).toBe('100553151')
     expect(card?.name).toBe('Swami_Shaggy-spaces.im.swf')
-    expect(card?.href).toBe(`https://spaces.im${downloadHref}`)
+    expect(card?.href).toBe(`${location.origin}${downloadHref}`)
     expect(card?.preview.classList.contains('file-card__preview')).toBe(true)
   })
 

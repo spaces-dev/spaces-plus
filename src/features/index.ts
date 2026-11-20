@@ -18,6 +18,7 @@ import { karma } from './karma'
 import { newYear } from './new-year'
 import { oldHeader } from './old-header'
 import { playerDownload } from './player-download'
+import { profileLinks } from './profile-links'
 import { recentSmiles } from './recent-smiles'
 import { scrollMove } from './scroll-move'
 import { createSettingsPage } from './settings/page'
@@ -35,6 +36,7 @@ const configurable = [
   coins,
   scrollMove,
   hiddenRightbar,
+  profileLinks,
   favoriteUser,
   hiddenProfile,
   galleryRotate,

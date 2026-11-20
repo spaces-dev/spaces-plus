@@ -1,3 +1,5 @@
+import { siteUrl } from '@/core/site'
+
 const downloadPath = '/files/download/'
 const extSelector = '.js-vc_fileext'
 const downloadSelector = 'a.__adv_download, a[href*="/files/download/"]'
@@ -15,13 +17,9 @@ export interface SwfCard {
 function absoluteUrl(href: string) {
   const raw = href.trim()
   if (!raw || raw === '#' || raw.toLowerCase().startsWith('javascript:')) return
-  try {
-    const url = new URL(raw, 'https://spaces.im')
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return
-    return url
-  } catch {
-
-  }
+  const url = siteUrl(raw, location.href)
+  if (!url || (url.protocol !== 'https:' && url.protocol !== 'http:')) return
+  return url
 }
 
 export const fileViewId = (pathname: string) => /^\/files\/view\/(\d+)/.exec(pathname)?.[1] ?? ''

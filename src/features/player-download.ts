@@ -2,7 +2,7 @@ import type { Feature } from '@/core/feature'
 import { el, observeElement } from '@zero-dependency/dom'
 import { defineToggle } from '@/core/feature'
 import { log } from '@/core/log'
-import { readPage } from '@/core/site'
+import { readPage, siteUrl } from '@/core/site'
 import { toggleId } from '@/types/toggles'
 
 const playerRoot = '#gp_main_player'
@@ -151,7 +151,8 @@ function fileName(label: string) {
 }
 
 function downloadUrl(src: string, label: string) {
-  const url = new URL(src, location.href)
+  const url = siteUrl(src, location.href)
+  if (!url) return src
   const segments = url.pathname.split('/')
   segments[segments.length - 1] = fileName(label)
   url.pathname = segments.join('/')

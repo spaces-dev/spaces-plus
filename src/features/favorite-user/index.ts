@@ -6,7 +6,7 @@ import { defineToggle } from '@/core/feature'
 import { http, httpStatus } from '@/core/http'
 import { log } from '@/core/log'
 import { modalConfirm } from '@/core/modals'
-import { baseUrl, pathAt, pathIndex, session } from '@/core/site'
+import { baseUrl, pathAt, pathIndex, session, siteUrl } from '@/core/site'
 import { withStyle } from '@/core/with-style'
 import { isClosedAccount } from '@/features/hidden-profile/links'
 import favoriteCss from '@/styles/features/favorite.scss?inline'
@@ -32,7 +32,8 @@ const ajaxPrefix = '/ajax'
 const bookmarkPage = (id: string) => `${baseUrl}/bookmarks/add/?object_id=${id}&object_type=${userBookmarkType}`
 
 function ajaxAction(url: string) {
-  const parsed = new URL(url, location.href)
+  const parsed = siteUrl(url, location.href)
+  if (!parsed) return url
   if (!parsed.pathname.startsWith(`${ajaxPrefix}/`)) parsed.pathname = `${ajaxPrefix}${parsed.pathname}`
   return parsed.href
 }

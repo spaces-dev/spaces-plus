@@ -18,6 +18,7 @@ export const toggleId = {
   friends: 'friendsOn',
   background: 'bodystyle',
   weather: 'weather',
+  profileLinks: 'profileLinks',
 } as const
 
 export type ToggleId = typeof toggleId[keyof typeof toggleId]

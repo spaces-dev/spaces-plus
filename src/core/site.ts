@@ -204,12 +204,20 @@ export function pathAt(index?: number) {
   return path.replace(/\/\s*$/, '').split('/')[index]
 }
 
-export function searchParam(url: string, key: string) {
+export function siteUrl(value: string, base?: string | URL) {
   try {
-    return new URL(url, location.origin).searchParams.get(key) ?? ''
+    return base === undefined ? new URL(value) : new URL(value, base)
   } catch {
-    return ''
+    return null
   }
+}
+
+export function sitePathname(value: string) {
+  return siteUrl(value, location.href)?.pathname ?? ''
+}
+
+export function searchParam(url: string, key: string) {
+  return siteUrl(url, location.href)?.searchParams.get(key) ?? ''
 }
 
 export function queryFlag(name: string) {

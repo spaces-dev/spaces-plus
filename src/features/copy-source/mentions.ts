@@ -1,17 +1,11 @@
-function pathOf(href: string) {
-  try {
-    return new URL(href, location.origin).pathname
-  } catch {
-    return ''
-  }
-}
+import { sitePathname } from '@/core/site'
 
 export function mentionText(element: HTMLElement) {
   if (element.tagName.toLowerCase() !== 'a') return ''
   const href = element.getAttribute('href') ?? ''
   const text = element.textContent?.trim() ?? ''
   if (!href || !text) return ''
-  const path = pathOf(href)
+  const path = sitePathname(href)
   if (/^\/mysite\/index\/[^/]+\/?$/i.test(path) && text.startsWith('@')) return text
   const community = /^\/soo\/([^/]+)\/?$/i.exec(path)
   const address = community?.[1] ?? ''

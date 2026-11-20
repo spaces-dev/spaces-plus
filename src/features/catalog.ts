@@ -26,6 +26,7 @@ export const settingsSections: SettingsSection[] = [
       toggle.redirect,
       toggle.scroll,
       toggle.rightbar,
+      toggle.profileLinks,
     ],
   },
   {

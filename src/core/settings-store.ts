@@ -22,6 +22,7 @@ interface StringCookies {
 type SpacesCookies = JsonCookies & StringCookies
 
 type Scalar = string | number | boolean | null
+type SettingValue = Scalar | readonly string[]
 
 type NestedGroup = {
   [K in keyof Settings]: Settings[K] extends object ? K : never
@@ -45,7 +46,7 @@ type ValueAt<P extends string> = P extends `${infer Parent}.${infer Child}`
 
 type SetSetting = {
   <P extends SettingPath>(key: P, value: ValueAt<P>): void
-  (key: string, value: Scalar): void
+  (key: string, value: SettingValue): void
 }
 
 const jsonKeys = new Set<keyof SpacesCookies>([storageKey.settings, storageKey.weather])
@@ -104,6 +105,11 @@ export const defaultSettings = {
     language: 'ru',
     units: 'metric',
     key: defaultWeatherKey,
+  },
+  [toggleId.profileLinks]: true,
+  profileLinksSet: {
+    order: [],
+    hidden: [],
   },
 } satisfies Settings
 
@@ -192,15 +198,18 @@ export const settingKey = {
   weatherCity: 'weatherSet.city',
   weatherKey: 'weatherSet.key',
   weatherInterval: 'weatherSet.interval',
+  profileLinksOrder: 'profileLinksSet.order',
+  profileLinksHidden: 'profileLinksSet.hidden',
 } as const satisfies Record<string, SettingPath>
 
-export const setSetting: SetSetting = (key: string, value: Scalar) => {
+export const setSetting: SetSetting = (key: string, value: SettingValue) => {
+  const stored = Array.isArray(value) ? [...value] : value
   const [parent, child] = key.split('.')
   if (child && parent) {
     const group = current[parent as keyof Settings]
-    if (isRecord(group)) group[child] = value
+    if (isRecord(group)) group[child] = stored
   } else {
-    Object.assign(current, { [key]: value })
+    Object.assign(current, { [key]: stored })
   }
 
   commit()

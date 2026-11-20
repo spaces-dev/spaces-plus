@@ -5,7 +5,7 @@ import { byId } from '@/core/dom'
 import { clearInvalid, markInvalid } from '@/core/fields'
 import { log } from '@/core/log'
 import { getSettings, setSetting, settingKey } from '@/core/settings-store'
-import { assetOrigin, loadSiteModules, readPage } from '@/core/site'
+import { assetOrigin, loadSiteModules, readPage, siteUrl } from '@/core/site'
 import backgroundCss from '@/styles/features/bodystyle.scss?inline'
 import { applyBodyStyle } from './apply'
 import { backgroundFiles } from './files'
@@ -43,12 +43,8 @@ const palette = [
 ]
 
 function isUrl(value: string) {
-  try {
-    const url = new URL(value)
-    return url.protocol === 'http:' || url.protocol === 'https:'
-  } catch {
-    return false
-  }
+  const url = siteUrl(value)
+  return url?.protocol === 'http:' || url?.protocol === 'https:'
 }
 
 let colorTicket = 0

@@ -1,3 +1,5 @@
+import { siteUrl } from '@/core/site'
+
 export interface ProfileText {
   text: string
   href: string
@@ -144,12 +146,8 @@ function sectionAliases(slug: string | undefined, bar: string, key: string) {
 
 function rewriteHref(href: string, aliases: Set<string>, key: string) {
   if (!href || !aliases.size) return href
-  let url: URL
-  try {
-    url = new URL(href, 'https://spaces.im')
-  } catch {
-    return href
-  }
+  const url = siteUrl(href, location.href)
+  if (!url) return href
   const parts = url.pathname.split('/')
   let changed = false
   for (let index = 0; index < parts.length; index++) {

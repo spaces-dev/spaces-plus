@@ -30,6 +30,11 @@ export interface WeatherSet {
   key: string
 }
 
+export interface ProfileLinksSet {
+  order: string[]
+  hidden: string[]
+}
+
 export interface Settings {
   [toggleId.readers]: boolean
   [toggleId.comments]: boolean
@@ -58,4 +63,6 @@ export interface Settings {
   bodystyleSet: BodystyleSet
   [toggleId.weather]: boolean
   weatherSet: WeatherSet
+  [toggleId.profileLinks]: boolean
+  profileLinksSet: ProfileLinksSet
 }

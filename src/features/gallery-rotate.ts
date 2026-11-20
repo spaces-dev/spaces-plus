@@ -2,6 +2,7 @@ import type { Feature } from '@/core/feature'
 import { el, observeElement } from '@zero-dependency/dom'
 import { defineToggle } from '@/core/feature'
 import { defaultSettings, getSettings, setSetting, settingKey } from '@/core/settings-store'
+import { siteUrl } from '@/core/site'
 import { withStyle } from '@/core/with-style'
 import galleryCss from '@/styles/features/gallery.scss?inline'
 import { toggleId } from '@/types/toggles'
@@ -42,13 +43,10 @@ function applyAngle(image: HTMLElement, angle: number, animate = false) {
 function fileId(value: string) {
   const raw = value.trim()
   if (!raw || raw === '#' || raw.startsWith('javascript:')) return ''
-  try {
-    const url = new URL(raw, location.href)
-    if (url.protocol === 'javascript:') return ''
-    return `${url.origin}${url.pathname}${url.search}`
-  } catch {
-    return raw
-  }
+  const url = siteUrl(raw, location.href)
+  if (!url) return raw
+  if (url.protocol === 'javascript:') return ''
+  return `${url.origin}${url.pathname}${url.search}`
 }
 
 function resetAngle() {

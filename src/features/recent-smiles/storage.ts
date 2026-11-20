@@ -1,17 +1,15 @@
 import type { CapturedSmile, SmileEntry, SmileMap } from './types'
 import { LocalStorage } from '@zero-dependency/storage'
 import { defaultSettings, getSettings } from '@/core/settings-store'
+import { siteUrl } from '@/core/site'
 
 const smilesKey = 'sp_recent_smiles'
 const smiles = new LocalStorage<Record<string, unknown>>(smilesKey, {})
 
 function sitePath(src: string) {
-  try {
-    const url = new URL(src, location.origin)
-    return `${url.pathname}${url.search}`
-  } catch {
-    return src
-  }
+  const url = siteUrl(src, location.origin)
+  if (!url) return src
+  return `${url.pathname}${url.search}`
 }
 
 function siteSet(srcset: string) {
@@ -19,12 +17,9 @@ function siteSet(srcset: string) {
 }
 
 export function withOrigin(path: string) {
-  try {
-    const url = new URL(path, location.origin)
-    return `${location.origin}${url.pathname}${url.search}`
-  } catch {
-    return path
-  }
+  const url = siteUrl(path, location.origin)
+  if (!url) return path
+  return `${location.origin}${url.pathname}${url.search}`
 }
 
 export function restoreSet(srcset: string) {
