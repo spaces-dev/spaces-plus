@@ -1,12 +1,16 @@
 import { el } from '@zero-dependency/dom'
 import { onSiteChange, siteCheckbox } from '@/core/checkbox'
-import { fieldGap, mountPanel, numberField } from '@/core/fields'
+import { mountPanel, numberField } from '@/core/fields'
 import { getSettings, setSetting, settingKey } from '@/core/settings-store'
 import { paintRecent } from './menu'
 import { trimSmiles } from './storage'
 
 export const recentsOptionsId = 'SP_PLUS_RECENTS'
-const recentRange = { min: 1, max: 120 }
+
+const recentRange = {
+  min: 1,
+  max: 120,
+}
 
 export function renderRecentOptions(anchor: HTMLElement) {
   mountPanel(recentsOptionsId, anchor, () => {
@@ -23,7 +27,6 @@ export function renderRecentOptions(anchor: HTMLElement) {
       min: recentRange.min,
       max: recentRange.max,
       maxLength: 3,
-      style: { marginBottom: fieldGap },
       onValid: (limit) => {
         setSetting(settingKey.recentLimit, limit)
         trimSmiles(limit)

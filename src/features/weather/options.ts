@@ -1,10 +1,23 @@
 import { el } from '@zero-dependency/dom'
-import { fieldGap, isInvalid, markInvalid, mountPanel, parseBoundedInt } from '@/core/fields'
+import {
+  fieldGap,
+  isInvalid,
+  markInvalid,
+  mountPanel,
+  parseBoundedInt,
+} from '@/core/fields'
 import { getSettings, setSetting, settingKey } from '@/core/settings-store'
 import { detectCity, geoPromptSkipped, getWeather } from './api'
-import { apiKeyPattern, cityInputId, cityPattern, intervalRange, loadingCity, openWeather, secondsPerMinute, weatherOptionsId } from './constants'
-
-const fieldStyle = { marginBottom: fieldGap }
+import {
+  apiKeyPattern,
+  cityInputId,
+  cityPattern,
+  intervalRange,
+  loadingCity,
+  openWeather,
+  secondsPerMinute,
+  weatherOptionsId,
+} from './constants'
 
 function onEnter(input: HTMLInputElement, action: () => void) {
   input.onkeypress = (event) => {
@@ -25,7 +38,7 @@ export function renderWeatherOptions(anchor: HTMLElement) {
       size: 32,
       value: weatherSet.key,
       autocomplete: 'new-password',
-      style: fieldStyle,
+      style: { marginBottom: fieldGap },
     })
     const markApiKey = () => {
       markInvalid(apiKey, !apiKeyPattern.test(apiKey.value))
@@ -48,7 +61,7 @@ export function renderWeatherOptions(anchor: HTMLElement) {
       id: cityInputId,
       value: waitingForCity ? loadingCity : weatherSet.city ?? '',
       autocomplete: 'off',
-      style: fieldStyle,
+      style: { marginBottom: fieldGap },
     })
     const markCity = () => {
       if (city.value === loadingCity) {
@@ -77,7 +90,6 @@ export function renderWeatherOptions(anchor: HTMLElement) {
       maxLength: 3,
       value: String(weatherSet.interval / secondsPerMinute),
       autocomplete: 'off',
-      style: fieldStyle,
     })
     interval.oninput = () => {
       const minutes = parseBoundedInt(interval.value, intervalRange.min, intervalRange.max)
